@@ -2,7 +2,8 @@ const fs = require('fs');
 const puppeteer = require('puppeteer');
 
 
-const URL = 'https://www.pichau.com.br/hardware/placa-de-video';
+
+const URL = 'https://www.instagram.com/blizzard/';
 
 
 
@@ -17,23 +18,23 @@ const URL = 'https://www.pichau.com.br/hardware/placa-de-video';
             timeout: 60000
         });
 
-        const mySelector = '.MuiTypography-h6'
+        
 
-        await page.waitForSelector('.MuiTypography-h6');
+        await page.waitForSelector('article img');
 
         const result = await page.evaluate(() => {
 
 
             const items = Array.from(
-                document.querySelectorAll('.MuiTypography-h6')
+                document.querySelectorAll('article img')
             )
 
             let filtro = [];
 
             for (let i of items) {
                 filtro.push(
-                    // i.getAttribute('src')
-                    i.innerText
+                     i.getAttribute('src')
+                   // i.innerText
                 )
             }
 
