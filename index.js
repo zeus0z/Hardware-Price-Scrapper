@@ -1,46 +1,53 @@
-const fs = require('fs');
-const puppeteer = require('puppeteer');
+
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+puppeteer.use(StealthPlugin());
+
+const { scrollPageToBottom } = require('puppeteer-autoscroll-down')
+const { executablePath } = require('puppeteer')
 
 
 
-const URL = 'https://www.instagram.com/blizzard/';
 
-
+const PICHAU = 'https://www.pichau.com.br/hardware/placa-de-video';
+const TERA = 'https://www.terabyteshop.com.br/hardware/placas-de-video';
 
 (async () => {
 
-    try {
-        const browser = await puppeteer.launch()
-        const page = await browser.newPage();
 
-        await page.goto(URL, {
-            waitUntil: "domcontentloaded",
-            timeout: 60000
+    try {
+        const browser = await puppeteer.launch({
+            headless: true,
+            executablePath: executablePath(),
+            //Se esse ai em cima não funcionar, usa esse:
+            // executablePath: require('puppeteer').executablePath(),
+            args: ["--no-sandbox"]
+        })
+        const page = (await browser.pages())[0];
+
+
+        await page.goto(PICHAU, {
+            waitUntil: "networkidle0"
         });
 
-        
+        await scrollPageToBottom(page, { size: 1000, delay: 2000, stepsLimit: 40 })
 
-        await page.waitForSelector('article img');
+        // -------------- EVALUATE------------------------------------
 
         const result = await page.evaluate(() => {
 
+            let selector = '#__next > main > div:nth-child(2) > div > div > div> div > a > div > div > div > div > img'
 
-            const items = Array.from(
-                document.querySelectorAll('article img')
-            )
-
-            let filtro = [];
-
-            for (let i of items) {
-                filtro.push(
-                     i.getAttribute('src')
-                   // i.innerText
-                )
+            const mapFn = function (i) {
+                return i.src
             }
 
-            return filtro;
+            const items = Array.from(
+                document.querySelectorAll(selector),
+                mapFn
+            )
 
-
+            return items;
         })
 
         console.log(result);
@@ -52,8 +59,11 @@ const URL = 'https://www.instagram.com/blizzard/';
     }
 }
 
-
-
-
-
 )();
+
+
+
+
+
+'#__next > main > div:nth-child(2) > div > div.MuiGrid-root.jss174.MuiGrid-item.MuiGrid-grid-md-9.MuiGrid-grid-lg-10 > div.MuiGrid-root.jss176.MuiGrid-container.MuiGrid-spacing-xs-3 > div'
+'#__next > main > div:nth-child(2) > div > div.MuiGrid-root.jss174.MuiGrid-item.MuiGrid-grid-md-9.MuiGrid-grid-lg-10 > div.MuiGrid-root.jss176.MuiGrid-container.MuiGrid-spacing-xs-3 > div > a > div > div.jss197 > div > div > img'
