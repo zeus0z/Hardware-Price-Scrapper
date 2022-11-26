@@ -36,21 +36,43 @@ const TERA = 'https://www.terabyteshop.com.br/hardware/placas-de-video';
 
         const result = await page.evaluate(() => {
 
-            let selector = '#__next > main > div:nth-child(2) > div > div > div> div > a > div > div > div > div > img'
+            const getProductsNames = () => {
+                let selector = '.MuiTypography-h6'
+                const mapFn = function (i) {
 
-            const mapFn = function (i) {
-                return i.src
+                    return i.innerText;
+                }
+                const items = Array.from(
+                    document.querySelectorAll(selector),
+                    mapFn
+                )
+
+                return items;
             }
 
-            const items = Array.from(
-                document.querySelectorAll(selector),
-                mapFn
-            )
+            const getImagesSources = () => {
+                let selector = '#__next > main > div:nth-child(2) > div > div > div> div > a > div > div > div > div > img'
+                const mapFn = function (i) {
 
-            return items;
+                    return i.src;
+                }
+                const items = Array.from(
+                    document.querySelectorAll(selector),
+                    mapFn
+                )
+
+                    return items;
+            }
+
+           
+            return getProductsNames;
+         
+
+
+           
         })
 
-        console.log(result);
+       console.log(result);
         await browser.close();
 
 
@@ -62,8 +84,16 @@ const TERA = 'https://www.terabyteshop.com.br/hardware/placas-de-video';
 )();
 
 
+/*
+------------------div pai
+
+'#__next > main > div:nth-child(2) > div > div> div > div'
+
+------------------imagem
+'#__next > main > div:nth-child(2) > div > div > div> div > a > div > div > div > div > img'
 
 
+------------------texto
+'.MuiTypography-h6'
 
-'#__next > main > div:nth-child(2) > div > div.MuiGrid-root.jss174.MuiGrid-item.MuiGrid-grid-md-9.MuiGrid-grid-lg-10 > div.MuiGrid-root.jss176.MuiGrid-container.MuiGrid-spacing-xs-3 > div'
-'#__next > main > div:nth-child(2) > div > div.MuiGrid-root.jss174.MuiGrid-item.MuiGrid-grid-md-9.MuiGrid-grid-lg-10 > div.MuiGrid-root.jss176.MuiGrid-container.MuiGrid-spacing-xs-3 > div > a > div > div.jss197 > div > div > img'
+*/
